@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://besrbsyfnjalq"]
+
+[ext_resource type="Script" uid="uid://dymkx76mmklei" path="res://game.gd" id="1_80nbo"]
+[ext_resource type="Script" uid="uid://q22w0egvvdas" path="res://ui.gd" id="2_e2o6t"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_feb5d"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_80nbo"]
+properties/0/path = NodePath(".:p1")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:p2")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[node name="Game" type="Node2D" unique_id=568834206]
+script = ExtResource("1_80nbo")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1747829565]
+script = ExtResource("2_e2o6t")
+
+[node name="Label" type="Button" parent="UI" unique_id=1513308386]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 183.5
+offset_right = -185.5
+offset_bottom = 76.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxEmpty_feb5d")
+text = "welcome"
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=548639915]
+replication_config = SubResource("SceneReplicationConfig_80nbo")
+
+[connection signal="pressed" from="UI/Label" to="UI" method="_on_label_pressed"]
