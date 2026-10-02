@@ -2,8 +2,10 @@ class_name GamaManager extends Node2D
 
 @onready var label: Button = $UI/Label
 
-var p1 : int = 0
-var p2 : int = 0
+var player_dict = {
+	1:0,
+	2:0	
+}
 
 enum GameStatus  {DISCONNECTED,WAITING, READY, PLAYING, OVER}
 
@@ -25,37 +27,36 @@ func _ready() -> void:
 	else:
 		#MM.connect_to_host()
 		#multiplayer.peer_connected.connect(_on_peer_connected)
-		await get_tree().create_timer(1).timeout
-		print( "[%d]  p1: %d    p2:%d" % [multiplayer.get_unique_id(),p1,p2])
+		#await get_tree().create_timer(1).timeout
+		print( "[%d]  p1: %d    p2:%d" % [multiplayer.get_unique_id(),player_dict[1],player_dict[2]])
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
 
 func _on_peer_connected(id: int):
 	if multiplayer.is_server():
-		if p1 == 0:
-			p1 = id
-		elif p2 == 0:
-			p2 = id
+		if player_dict[1] == 0:
+			player_dict[1] = id
+		elif player_dict[2] == 0:
+			player_dict[2] = id
 			game_status = GameStatus.READY
-	print( "[%d]  p1: %d    p2:%d" % [multiplayer.get_unique_id(),p1,p2])
+	await get_tree().process_frame
+	print( "[%d]  p1: %d    p2:%d" % [multiplayer.get_unique_id(),player_dict[1],player_dict[2]])
 	pass
 
 func _on_peer_disconnected(id: int):
-	if is_multiplayer_authority():
-		if p1 == id:
-			p1 = 0
+	if multiplayer.is_server():
+		if player_dict[1] == id:
+			player_dict[1] = 0
 			game_status = GameStatus.WAITING
-		elif p2 == id:
-			p2 = 0
+		elif player_dict[2] == id:
+			player_dict[2] = 0
 			game_status = GameStatus.WAITING
 		
 	
 	
 	
-@rpc("authority","call_local","reliable")
+@rpc("any_peer","call_remote","reliable")
 func update_game_status(status: GameStatus):
+	print ("update called by %d" % multiplayer.get_remote_sender_id())
 	if game_status == status: return
 	
 	game_status = status

@@ -20,10 +20,9 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	label.text = status_dictionary[game.game_status]	
 	
-
 
 func _on_label_pressed() -> void:
 	match game.game_status:
